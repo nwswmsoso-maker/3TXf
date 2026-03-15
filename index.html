@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3TX — Link Shortener</title>
+  <title>3TX — TikTok Downloader</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { min-height: 100vh; background: #0a0a0a; font-family: 'Courier New', monospace; color: #e0e0e0; direction: rtl; }
@@ -16,7 +15,7 @@
     .dots { margin-right: auto; display: flex; gap: 6px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; }
     .container { max-width: 700px; margin: 0 auto; padding: 40px 24px; }
-    .card { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 32px; margin-bottom: 32px; position: relative; overflow: hidden; }
+    .card { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
     .accent-line { position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(180deg, #ff4500, transparent); }
     label { display: block; font-size: 0.7rem; color: #ff4500; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 8px; }
     input[type="text"] { width: 100%; background: #0a0a0a; border: 1px solid #333; border-radius: 2px; padding: 12px 14px; color: #e0e0e0; font-size: 0.9rem; outline: none; direction: ltr; font-family: 'Courier New', monospace; transition: border-color 0.2s; margin-bottom: 20px; }
@@ -25,21 +24,18 @@
     .btn-main { width: 100%; padding: 14px; background: #ff4500; color: #fff; border: none; border-radius: 2px; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; font-family: 'Courier New', monospace; transition: background 0.2s; }
     .btn-main:disabled { background: #1a1a1a; color: #555; cursor: not-allowed; }
     .btn-main:hover:not(:disabled) { background: #e03d00; }
-    .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .history-title { font-size: 0.7rem; color: #ff4500; letter-spacing: 0.3em; text-transform: uppercase; }
-    .btn-clear { background: none; border: 1px solid #2a2a2a; color: #555; padding: 4px 10px; border-radius: 2px; cursor: pointer; font-size: 0.7rem; font-family: 'Courier New', monospace; }
-    .history-list { display: flex; flex-direction: column; gap: 8px; }
-    .history-item { background: #111; border: 1px solid #1e1e1e; border-radius: 2px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s; }
-    .history-item:hover { border-color: #333; }
-    .item-info { flex: 1; min-width: 0; }
-    .item-short { color: #ff4500; font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; direction: ltr; }
-    .item-original { color: #555; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: ltr; }
-    .item-date { color: #444; font-size: 0.7rem; margin-top: 4px; }
-    .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .btn-copy, .btn-delete { background: #1a1a1a; border: 1px solid #333; color: #888; padding: 6px 12px; border-radius: 2px; cursor: pointer; font-size: 0.75rem; font-family: 'Courier New', monospace; transition: all 0.2s; }
-    .btn-copy.copied { background: #1a2a1a; border-color: #4caf50; color: #4caf50; }
-    .btn-delete { padding: 6px 10px; }
-    .btn-delete:hover { border-color: #ff4500; color: #ff4500; }
+    .result-card { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 24px; display: none; }
+    .video-info { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+    .thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #333; flex-shrink: 0; }
+    .video-meta { flex: 1; min-width: 0; }
+    .video-author { color: #ff4500; font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+    .video-desc { color: #888; font-size: 0.8rem; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .video-stats { display: flex; gap: 12px; margin-top: 8px; }
+    .stat { color: #555; font-size: 0.75rem; }
+    .download-btns { display: flex; flex-direction: column; gap: 10px; }
+    .btn-download { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #0a0a0a; border: 1px solid #333; border-radius: 2px; color: #e0e0e0; text-decoration: none; font-family: 'Courier New', monospace; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .btn-download:hover { border-color: #ff4500; color: #ff4500; }
+    .btn-download .badge { background: #ff4500; color: #fff; padding: 2px 8px; border-radius: 2px; font-size: 0.7rem; font-weight: 700; }
     .hidden { display: none; }
   </style>
 </head>
@@ -49,8 +45,8 @@
   <div class="logo">3TX</div>
   <div class="divider"></div>
   <div>
-    <div class="header-sub">Link Shortener</div>
-    <div class="header-sub2">روابط دائمة · مجانية · خاصة بك</div>
+    <div class="header-sub">TikTok Downloader</div>
+    <div class="header-sub2">بدون علامة مائية · مجاني · سريع</div>
   </div>
   <div class="dots">
     <div class="dot" style="background:#ff4500"></div>
@@ -58,131 +54,3 @@
     <div class="dot" style="background:#ff9166"></div>
   </div>
 </header>
-
-<div class="container">
-  <div class="card">
-    <div class="accent-line"></div>
-    <label>الرابط الأصلي</label>
-    <input type="text" id="urlInput" placeholder="https://example.com/رابط-طويل..." />
-    <div class="error-box" id="errorBox"></div>
-    <button class="btn-main" id="shortenBtn" onclick="shortenURL()">▶ اختصر الرابط</button>
-  </div>
-
-  <div id="historySection" class="hidden">
-    <div class="history-header">
-      <div class="history-title" id="historyTitle">سجل الروابط</div>
-      <button class="btn-clear" onclick="clearAll()">مسح الكل</button>
-    </div>
-    <div class="history-list" id="historyList"></div>
-  </div>
-</div>
-
-<script>
-  const STORAGE_KEY = "3tx-links";
-  let links = [];
-
-  function loadLinks() {
-    try { const s = localStorage.getItem(STORAGE_KEY); if (s) links = JSON.parse(s); } catch {}
-    render();
-  }
-
-  function saveLinks() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(links)); } catch {}
-    render();
-  }
-
-  function render() {
-    const section = document.getElementById("historySection");
-    const list = document.getElementById("historyList");
-    if (links.length === 0) { section.classList.add("hidden"); return; }
-    section.classList.remove("hidden");
-    document.getElementById("historyTitle").textContent = `سجل الروابط (${links.length})`;
-    list.innerHTML = links.map(e => `
-      <div class="history-item">
-        <div class="item-info">
-          <div class="item-short">${e.short}</div>
-          <div class="item-original">${e.original}</div>
-          <div class="item-date">${e.date}</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn-copy" id="copy-${e.id}" onclick="copyURL('${e.short}',${e.id})">نسخ</button>
-          <button class="btn-delete" onclick="deleteEntry(${e.id})">✕</button>
-        </div>
-      </div>`).join("");
-  }
-
-  async function shortenURL() {
-    const btn = document.getElementById("shortenBtn");
-    const errorBox = document.getElementById("errorBox");
-    errorBox.style.display = "none";
-
-    let inputUrl = document.getElementById("urlInput").value.trim();
-    if (!inputUrl) { showError("أدخل رابطاً أولاً"); return; }
-    if (!inputUrl.startsWith("http://") && !inputUrl.startsWith("https://")) inputUrl = "https://" + inputUrl;
-    try { new URL(inputUrl); } catch { showError("الرابط غير صحيح"); return; }
-
-    btn.disabled = true;
-    btn.textContent = "⏳ جاري الاختصار...";
-
-    // نجرب أكثر من خدمة بالترتيب
-    const result = await tryCleanuri(inputUrl) || await tryIsgd(inputUrl);
-
-    if (result) {
-      links = [{ id: Date.now(), original: inputUrl, short: result, date: new Date().toLocaleDateString("ar") }, ...links].slice(0, 50);
-      saveLinks();
-      document.getElementById("urlInput").value = "";
-    } else {
-      showError("فشل الاختصار. تحقق من الاتصال بالإنترنت.");
-    }
-
-    btn.disabled = false;
-    btn.textContent = "▶ اختصر الرابط";
-  }
-
-  async function tryCleanuri(url) {
-    try {
-      const res = await fetch("https://cleanuri.com/api/v1/shorten", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `url=${encodeURIComponent(url)}`
-      });
-      const data = await res.json();
-      if (data.result_url) return data.result_url;
-    } catch {}
-    return null;
-  }
-
-  async function tryIsgd(url) {
-    try {
-      const proxy = "https://corsproxy.io/?";
-      const target = `https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`;
-      const res = await fetch(proxy + encodeURIComponent(target));
-      const text = await res.text();
-      if (text.startsWith("https://is.gd") || text.startsWith("http://is.gd")) return text.trim();
-    } catch {}
-    return null;
-  }
-
-  function showError(msg) {
-    const box = document.getElementById("errorBox");
-    box.textContent = "⚠ " + msg;
-    box.style.display = "block";
-  }
-
-  function copyURL(url, id) {
-    navigator.clipboard.writeText(url).then(() => {
-      const btn = document.getElementById(`copy-${id}`);
-      if (btn) { btn.textContent = "✓ تم"; btn.classList.add("copied"); }
-      setTimeout(() => { if (btn) { btn.textContent = "نسخ"; btn.classList.remove("copied"); } }, 2000);
-    });
-  }
-
-  function deleteEntry(id) { links = links.filter(h => h.id !== id); saveLinks(); }
-  function clearAll() { links = []; saveLinks(); }
-
-  document.getElementById("urlInput").addEventListener("keydown", e => { if (e.key === "Enter") shortenURL(); });
-
-  loadLinks();
-</script>
-</body>
-</html>
