@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -123,21 +124,43 @@
     btn.disabled = true;
     btn.textContent = "⏳ جاري الاختصار...";
 
-    try {
-      const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(inputUrl)}`);
-      if (!res.ok) throw new Error();
-      const shortUrl = await res.text();
-      if (!shortUrl.startsWith("https://is.gd") && !shortUrl.startsWith("http://is.gd")) throw new Error();
+    // نجرب أكثر من خدمة بالترتيب
+    const result = await tryCleanuri(inputUrl) || await tryIsgd(inputUrl);
 
-      links = [{ id: Date.now(), original: inputUrl, short: shortUrl.trim(), date: new Date().toLocaleDateString("ar") }, ...links].slice(0, 50);
+    if (result) {
+      links = [{ id: Date.now(), original: inputUrl, short: result, date: new Date().toLocaleDateString("ar") }, ...links].slice(0, 50);
       saveLinks();
       document.getElementById("urlInput").value = "";
-    } catch {
+    } else {
       showError("فشل الاختصار. تحقق من الاتصال بالإنترنت.");
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "▶ اختصر الرابط";
     }
+
+    btn.disabled = false;
+    btn.textContent = "▶ اختصر الرابط";
+  }
+
+  async function tryCleanuri(url) {
+    try {
+      const res = await fetch("https://cleanuri.com/api/v1/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `url=${encodeURIComponent(url)}`
+      });
+      const data = await res.json();
+      if (data.result_url) return data.result_url;
+    } catch {}
+    return null;
+  }
+
+  async function tryIsgd(url) {
+    try {
+      const proxy = "https://corsproxy.io/?";
+      const target = `https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`;
+      const res = await fetch(proxy + encodeURIComponent(target));
+      const text = await res.text();
+      if (text.startsWith("https://is.gd") || text.startsWith("http://is.gd")) return text.trim();
+    } catch {}
+    return null;
   }
 
   function showError(msg) {
