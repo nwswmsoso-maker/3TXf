@@ -155,7 +155,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 const sessionId=Math.random().toString(36).substring(2)+'_'+Date.now().toString(36);
 let player,currentVideoId='',isUnmuted=false,currentVolume=100,watchdogTimer=null;
-const SONG_DURATION_MS=4*60*1000;
+const SONG_DURATION_MS=3*60*1000;
 window.isAdminMode=false;
 let lastKnownViewerCount=0,lastMsgCount=0;
 
