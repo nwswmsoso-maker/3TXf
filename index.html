@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>غيّر جوك TV | البث المباشر الرسمي</title>
+<meta name="description" content="قناة غيّر جوك TV - البث المباشر الرسمي على مدار الساعة. موسيقى، أغاني، والمحتوى الحصري مباشر 24/7.">
+<meta name="keywords" content="غيّر جوك, TV, بث مباشر, قناة, live stream, موسيقى, عربي, غير جوك">
+<meta name="author" content="غيّر جوك TV">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#ff2a3b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="غيّر جوك TV">
+<meta property="og:title" content="غيّر جوك TV | البث المباشر الرسمي">
+<meta property="og:description" content="شاهد واستمع إلى أفضل البث المباشر على قناة غيّر جوك TV. موسيقى متواصلة، محتوى حصري، وتجربة فريدة 24 ساعة.">
+<meta property="og:url" content="https://غير-جوك-tv.com">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:image" content="cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="غيّر جوك TV | البث المباشر الرسمي">
+<meta name="twitter:description" content="شاهد واستمع إلى أفضل البث المباشر على قناة غيّر جوك TV.">
+<meta name="twitter:image" content="cover.jpg">
+
+<link rel="icon" type="image/png" sizes="32x32" href="cover.jpg">
+<link rel="icon" type="image/png" sizes="192x192" href="cover.jpg">
+<link rel="apple-touch-icon" sizes="180x180" href="cover.jpg">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#07070f; --panel:#0e0e1c; --accent:#ff2a3b; --border:rgba(255,255,255,0.08); --text:#d0d0e8; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+.header{background:var(--panel);border-bottom:1px solid var(--border);padding:0 20px;display:flex;justify-content:space-between;align-items:center;height:56px;flex-shrink:0}
+.logo{font-size:1.25rem;font-weight:900;color:#fff}
+.logo span{color:var(--accent)}
+.header-badges{display:flex;align-items:center;gap:12px}
+.live-badge{background:rgba(255,42,59,0.15);border:1px solid var(--accent);color:var(--accent);padding:5px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 0 10px rgba(255,42,59,0.2)}
+.viewer-badge{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;padding:5px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px;min-width:55px;justify-content:center}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.main-layout{flex:1;display:flex;overflow:hidden;background:#000}
+.player-container{flex:3;display:flex;align-items:center;justify-content:center;background:#000;position:relative}
+.screen-wrapper{width:100%;aspect-ratio:16/9;max-height:100%;background:#000;position:relative;overflow:hidden}
+#ytPlayer{width:100%;height:100%;border:none;pointer-events:none;} /* منعنا تحكم المشاهد بالفديو بشكل كامل */
+.click-blocker{position:absolute;inset:0;z-index:5;background:transparent}
+.unmute-floating-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(45deg,#ff2a3b,#d10010);color:#fff;border:none;padding:16px 32px;border-radius:50px;font-weight:900;font-size:1.1rem;box-shadow:0 10px 30px rgba(255,42,59,0.6);z-index:99;cursor:pointer;display:flex;align-items:center;gap:10px;animation:pulseButton 1.8s infinite}
+@keyframes pulseButton{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
+.embedded-ticker{position:absolute;bottom:0;left:0;right:0;height:42px;background:rgba(14,14,28,0.9);border-top:1px solid var(--border);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;z-index:10;overflow:hidden}
+.ticker-tag{background:var(--accent);height:100%;padding:0 18px;display:flex;align-items:center;font-weight:900;font-size:0.9rem;z-index:12;white-space:nowrap;box-shadow:-5px 0 15px rgba(0,0,0,0.5);gap:6px}
+.ticker-space{flex:1;overflow:hidden;display:flex;align-items:center}
+.ticker-move{display:inline-block;white-space:nowrap;padding-right:100%;font-weight:700;font-size:0.95rem;animation:textRun 25s linear infinite}
+@keyframes textRun{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(100%,0,0)}}
+
+.youtube-chat-panel{flex:1;min-width:360px;max-width:420px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;box-shadow:inset 5px 0 20px rgba(0,0,0,0.3)}
+.chat-title{padding:16px;border-bottom:1px solid var(--border);font-weight:900;font-size:0.95rem;flex-shrink:0;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.02)}
+
+/* ═══ سكرول ناعم جداً ═══ */
+.chat-body{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;background:#07070f;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;transform:translateZ(0);backface-visibility:hidden}
+.chat-body::-webkit-scrollbar{width:3px}
+.chat-body::-webkit-scrollbar-track{background:transparent}
+.chat-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
+
+/* ═══ رسالة عادية - ثابتة بدون أنيميشن ═══ */
+.yt-message{font-size:0.92rem;line-height:1.5;background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;border-right:3px solid rgba(255,255,255,0.06);word-wrap:break-word;transform:translateZ(0)}
+.yt-author{font-weight:900;color:#a9a9c5;margin-left:6px;display:inline}
+.yt-text{color:#fff;display:inline;font-weight:500}
+
+/* ═══ رسالة جديدة - أنيميشن خفيف مرة واحدة ═══ */
+.yt-message.new-msg{animation:softSlide 0.2s ease-out forwards}
+@keyframes softSlide{0%{opacity:0;transform:translateY(8px) translateZ(0)}100%{opacity:1;transform:translateY(0) translateZ(0)}}
+
+/* ═══ اسم المالك ═══ */
+.owner-name{font-weight:900;background:linear-gradient(135deg,#ffd740,#ff6d00,#ff2a3b,#d500f9);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:ownerFlow 3s ease infinite;display:inline-flex;align-items:center;gap:5px}
+.owner-name i{-webkit-text-fill-color:#ffd740;font-size:0.85rem}
+.owner-colon{color:#ffd740;font-weight:bold;margin:0 2px}
+.yt-message.owner-msg{border-right:3px solid #ffd740!important;background:linear-gradient(90deg,rgba(255,215,64,0.05),transparent)!important}
+@keyframes ownerFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.admin-bar{display:none;padding:10px 16px;background:linear-gradient(90deg,rgba(255,42,59,0.1),rgba(255,215,64,0.05));border-bottom:1px solid rgba(255,215,64,0.2);justify-content:space-between;align-items:center;flex-shrink:0}
+.admin-bar span{color:#ffd740;font-size:0.85rem;font-weight:900;display:flex;align-items:center;gap:6px}
+.admin-clear-btn{background:rgba(255,42,59,0.2);color:#ff4757;border:1px solid #ff4757;padding:6px 12px;border-radius:6px;font-size:0.75rem;font-weight:900;cursor:pointer}
+.admin-clear-btn:hover{background:#ff4757;color:#fff}
+.mod-actions{float:left;display:flex;gap:6px;margin-top:2px}
+.mod-btn{font-size:0.7rem;font-weight:900;padding:3px 8px;border-radius:5px;cursor:pointer}
+.mod-btn.mute{background:rgba(255,171,0,0.15);color:#ffab00}
+.mod-btn.ban{background:rgba(255,42,59,0.15);color:#ff2a3b}
+.mod-btn.unban{background:rgba(0,200,83,0.15);color:#00c853}
+.mod-btn:hover{filter:brightness(1.4)}
+
+.chat-inputs{padding:14px 16px;border-top:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.input-style{width:100%;padding:12px 14px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:inherit;margin-bottom:10px;box-shadow:inset 0 2px 5px rgba(0,0,0,0.5)}
+.input-style:focus{outline:none;border-color:rgba(255,215,64,0.6)}
+.input-style::placeholder{color:#6a6a8c;font-weight:500}
+.send-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.send-btn{background:var(--accent);color:#fff;border:none;height:46px;width:55px;border-radius:10px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.send-btn:hover{background:#d10010}
+#secretCodeSection{display:none;margin-bottom:10px}
+#secretCodeSection .input-style{border-color:#ffd740;box-shadow:0 0 10px rgba(255,215,64,0.1);margin-bottom:0}
+
+.toast-msg{position:fixed;top:-60px;left:50%;transform:translateX(-50%);background:rgba(14,14,28,0.95);color:#fff;padding:12px 24px;border-radius:50px;border:1px solid var(--border);font-weight:900;font-size:0.9rem;z-index:9999;display:flex;align-items:center;gap:8px;transition:top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);pointer-events:none}
+.toast-msg.show{top:30px}
+.toast-msg.success i{color:#00c853}
+.toast-msg.danger i{color:#ff2a3b}
+
+@media(max-width:900px){body{height:100dvh;overflow:hidden}.main-layout{flex-direction:column}.player-container{flex:none;width:100%}.youtube-chat-panel{max-width:100%;min-width:100%;flex:1;border-right:none;border-top:1px solid var(--border)}}
+</style>
+</head>
+<body>
+
+<div id="smartToast" class="toast-msg"><i class="fa-solid fa-circle-check"></i> <span id="toastText"></span></div>
+
+<header class="header">
+  <div class="logo">غيّر جوك <span>TV</span></div>
+  <div class="header-badges">
+    <div class="viewer-badge"><i class="fa-solid fa-eye" style="color:var(--accent)"></i> <span id="viewerCount">0</span></div>
+    <div class="live-badge"><i class="fa-solid fa-circle" style="font-size:8px;animation:blink 1.2s infinite;color:#fff"></i> مباشر</div>
+  </div>
+</header>
+
+<div class="main-layout">
+  <div class="player-container">
+    <div class="screen-wrapper">
+      <button class="unmute-floating-btn" id="unmuteBtn" onclick="enableSound()"><i class="fa-solid fa-play"></i> انقر لتشغيل البث والصوت 🔊</button>
+      <div class="click-blocker"></div>
+      <div id="ytPlayer"></div>
+      <div class="embedded-ticker"><div class="ticker-tag"><i class="fa-solid fa-bullhorn"></i> قناه TV</div><div class="ticker-space"><div class="ticker-move" id="tickerText">أهلاً بكم في بث غيّر جوك TV المباشر...</div></div></div>
+    </div>
+  </div>
+
+  <div class="youtube-chat-panel">
+    <div class="chat-title"><i class="fa-regular fa-comments" style="color:var(--accent);font-size:1.1rem"></i> المحادثة المباشرة</div>
+    <div class="admin-bar" id="adminPanel"><span><i class="fa-solid fa-crown" style="font-size:1.1rem"></i> المالك: صوفي ال دليم</span><button class="admin-clear-btn" onclick="clearAllChatGlobal()"><i class="fa-solid fa-trash-can"></i> مسح الدردشة</button></div>
+    <div class="chat-body" id="chatBox"></div>
+    <div class="chat-inputs">
+      <input type="text" id="chatUser" class="input-style" placeholder="اسمك المستعار">
+      <div id="secretCodeSection"><div style="font-size:0.75rem;color:#ffd740;margin-bottom:6px;font-weight:700"><i class="fa-solid fa-key"></i> اكتب كودك السري (أول مرة فقط)</div><input type="password" id="adminCode" class="input-style" placeholder="أدخل الكود السري هنا..."></div>
+      <div class="send-row"><input type="text" id="chatMsg" class="input-style" style="margin-bottom:0;flex:1" placeholder="اكتب رسالتك هنا..."><button class="send-btn" onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const SB_URL='https://hvgtysuwzdtsgqjgsuhi.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2Z3R5c3V3emR0c2dxamdzdWhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjgyNDIsImV4cCI6MjA5NjE0NDI0Mn0.YjlcTIO_uycIolB3N2dkw0U76iJ76G57uhwpuTavrSM';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+const sessionId=Math.random().toString(36).substring(2)+'_'+Date.now().toString(36);
+let player,currentVideoId='',isUnmuted=false,currentVolume=100,localIndexOffset=0,lastSlot=-1,watchdogTimer=null;
+const SONG_DURATION_MS=4*60*1000;
+window.isAdminMode=false;
+let lastKnownViewerCount=0,lastMsgCount=0;
+
+function checkSavedOwner(){if(localStorage.getItem('owner_verified')==='true'){window.isAdminMode=true;document.getElementById('adminPanel').style.display='flex';document.getElementById('secretCodeSection').style.display='none';const cu=document.getElementById('chatUser');cu.value='صوفي ال دليم';cu.disabled=true;cu.style.background='rgba(255,215,64,0.08)';cu.style.border='1px solid #ffd740';cu.style.color='#ffd740';cu.placeholder='المالك: صوفي ال دليم'}}
+function showToast(msg,isDanger=false){const t=document.getElementById('smartToast');document.getElementById('toastText').textContent=msg;t.className='toast-msg show '+(isDanger?'danger':'success');setTimeout(()=>t.classList.remove('show'),2500)}
+async function pingViewer(){try{await sb.from('viewers').upsert({session_id:sessionId,last_seen:new Date().toISOString()},{onConflict:'session_id'})}catch(e){}}
+async function getViewerCount(){try{const since=new Date(Date.now()-30000).toISOString();const{count}=await sb.from('viewers').select('*',{count:'exact',head:true}).gte('last_seen',since);if(count!==null&&count!==lastKnownViewerCount){lastKnownViewerCount=count;const el=document.getElementById('viewerCount');el.style.transform='scale(1.3)';el.style.transition='transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275)';el.textContent=count;setTimeout(()=>el.style.transform='scale(1)',200)}}catch(e){}}
+
+document.getElementById('chatUser').addEventListener('input',function(){const sec=document.getElementById('secretCodeSection');if(this.value.trim()==='صوفي ال دليم'&&localStorage.getItem('owner_verified')!=='true')sec.style.display='block';else sec.style.display='none'});
+document.getElementById('adminCode').addEventListener('keypress',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('chatMsg').focus()}});
+document.getElementById('chatMsg').addEventListener('keypress',function(e){if(e.key==='Enter')sendChat()});
+
+function onYouTubeIframeAPIReady(){player=new YT.Player('ytPlayer',{playerVars:{autoplay:1,controls:0,rel:0,loop:1,modestbranding:1,disablekb:1,enablejsapi:1,playsinline:1,origin:window.location.origin},events:{onReady:()=>{if(player.mute)player.mute();controlCenterLoop()},onStateChange:onPlayerStateChange}})}
+function onPlayerStateChange(e){if(e.data===YT.PlayerState.PLAYING)clearTimeout(watchdogTimer)}
+function startWatchdog(){clearTimeout(watchdogTimer);if(!isUnmuted)return;watchdogTimer=setTimeout(()=>{if(player&&player.getPlayerState&&player.getPlayerState()===3)handleVideoFailure()},8000)}
+function handleVideoFailure(){localIndexOffset++;controlCenterLoop()}
+function enableSound(){if(player){isUnmuted=true;if(player.unMute)player.unMute();if(player.setVolume)player.setVolume(currentVolume);if(player.playVideo)player.playVideo();const b=document.getElementById('unmuteBtn');b.style.transition='opacity 0.4s ease';b.style.opacity='0';setTimeout(()=>b.style.display='none',400)}}
+
+function extractYoutubeId(url){if(!url)return{id:'',type:''};url=url.trim();if(url.includes('list=')){const m=url.match(/[&?]list=([^#&?]+)/);if(m&&m[1])return{id:m[1],type:'playlist'}}if(/^[a-zA-Z0-9_-]{11}$/.test(url))return{id:url,type:'video'};if(url.includes('/shorts/'))return{id:url.split('/shorts/')[1].split(/[?#&]/)[0],type:'video'};const reg=/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch|\?vvi?=|\&vvi?=)(?:\?v=)?))([^#\&\?]*).*/;const m=url.match(reg);return(m&&m[1]&&m[1].trim().length===11)?{id:m[1].trim(),type:'video'}:{id:'',type:''}}
+
+// الدالة المسؤولة عن المزامنة والتشغيل (تم التعديل عليها)
+async function controlCenterLoop(){
+  const{data:config}=await sb.from('channel_settings').select('*').eq('id','live_stream').single();
+  if(!config)return;
+  
+  document.getElementById('tickerText').textContent=(config.ticker_text&&config.ticker_text.trim()!=='')?config.ticker_text:"أهلاً بكم في قناة غيّر جوك TV البث المباشر...";
+  currentVolume=config.volume!==undefined?config.volume:100;
+  
+  if(player){
+    if(currentVolume===0){if(player.mute)player.mute()}
+    else{
+      if(isUnmuted){if(player.unMute)player.unMute();if(player.setVolume)player.setVolume(currentVolume)}
+    }
+  }
+  
+  let targetUrl='',startSeconds=0;
+  const now=Date.now();
+  
+  // حساب الوقت حسب نوع البث
+  if(config.override_url&&config.override_start&&(now-config.override_start<SONG_DURATION_MS)){
+    targetUrl=config.override_url;
+    startSeconds=Math.floor((now-config.override_start)/1000);
+  }else{
+    const{data:songs}=await sb.from('playlist').select('*').order('id',{ascending:true});
+    if(songs&&songs.length>0){
+      const s=Math.floor(now/SONG_DURATION_MS);
+      if(s!==lastSlot){localIndexOffset=0;lastSlot=s}
+      const i=(s+localIndexOffset)%songs.length;
+      targetUrl=songs[i].video_url;
+      if(localIndexOffset>0){startSeconds=0}else{startSeconds=Math.floor((now-s*SONG_DURATION_MS)/1000)}
+    }else{
+      targetUrl='dQw4w9WgXcQ'
+    }
+  }
+  
+  const res=extractYoutubeId(targetUrl);
+  if(player && res.id){
+    let targetTime = Math.max(0, startSeconds);
+    
+    // إذا الفديو جديد وممامشغلينه بعد
+    if(currentVideoId !== res.id){
+      currentVideoId=res.id;
+      if(res.type==='playlist'){
+        player.loadPlaylist({list:res.id,listType:'playlist',index:0,startSeconds:targetTime})
+      }else{
+        player.loadVideoById({videoId:res.id,startSeconds:targetTime})
+      }
+      if(isUnmuted&&player.playVideo){setTimeout(()=>{try{player.playVideo()}catch(e){}},400)}
+      startWatchdog();
+    } 
+    // إذا نفس الفديو ديشتغل، هنا يجي دور المزامنة التلفزيونية الحقيقية
+    else {
+      if(typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function'){
+        let viewerTime = player.getCurrentTime();
+        // إذا المشاهد متأخر أو متقدم بأكثر من 3 ثواني عن البث، نجبره يرجع للوقت الصحيح
+        if(Math.abs(viewerTime - targetTime) > 3){
+          player.seekTo(targetTime, true);
+        }
+      }
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════ */
+/* 🪶 تحديث سلس مثل تليجرام */
+/* ═══════════════════════════════════════════ */
+async function fetchLiveChat(){
+  if(localStorage.getItem('user_banned_status')==='true'){document.getElementById('chatBox').innerHTML='<div style="color:#ff2a3b;text-align:center;margin-top:30px;font-weight:900;background:rgba(255,42,59,0.1);padding:20px;border-radius:10px;"><i class="fa-solid fa-ban" style="font-size:2rem;margin-bottom:10px;"></i><br>تم حظرك نهائياً من هذه الدردشة!</div>';return}
+  const{data}=await sb.from('channel_chat').select('*').order('id',{ascending:false}).limit(40);
+  if(!data)return;
+  
+  const box=document.getElementById('chatBox'),myName=document.getElementById('chatUser').value.trim();
+  const wasAtBottom=box.scrollHeight-box.clientHeight<=box.scrollTop+50;
+  
+  const currentCount=data.length;
+  const hasNewMsgs=currentCount>lastMsgCount;
+  lastMsgCount=currentCount;
+  
+  let html='';
+  data.reverse().forEach((m,i)=>{
+    if(m.username==='📢 أمر نظام الإشراف'){
+      if(m.message==='CLEAR_SCREEN'){html='';return}
+      else if(m.message.startsWith('BAN_USER:')){const t=m.message.split('BAN_USER:')[1];if(myName===t&&t!=='صوفي ال دليم')localStorage.setItem('user_banned_status','true')}
+      else if(m.message.startsWith('MUTE_USER:')){const t=m.message.split('MUTE_USER:')[1];if(myName===t&&t!=='صوفي ال دليم')localStorage.setItem('user_muted_status','true')}
+      else if(m.message.startsWith('UNBAN_USER:')){const t=m.message.split('UNBAN_USER:')[1];if(myName===t){localStorage.removeItem('user_banned_status');localStorage.removeItem('user_muted_status')}}
+      return
+    }
+    
+    let isOwner=m.username==='صوفي ال دليم';
+    let authorHtml=isOwner?`<span class="owner-name"><i class="fa-solid fa-crown"></i> ${m.username}</span><span class="owner-colon">:</span>`:`<span class="yt-author">${m.username}:</span>`;
+    let modBtns='';
+    if(window.isAdminMode&&!isOwner){modBtns=`<div class="mod-actions"><span class="mod-btn mute" onclick="triggerAction('MUTE','${m.username.replace(/'/g,"\\'")}')">كتم</span><span class="mod-btn ban" onclick="triggerAction('BAN','${m.username.replace(/'/g,"\\'")}')">حظر</span><span class="mod-btn unban" onclick="triggerAction('UNBAN','${m.username.replace(/'/g,"\\'")}')">إلغاء</span></div>`}
+    
+    let cls=isOwner?'yt-message owner-msg':'yt-message';
+    let ts=isOwner?'color:#ffd740;font-weight:700':'';
+    
+    if(hasNewMsgs&&i>=currentCount-3) cls+=' new-msg';
+    
+    html+=`<div class="${cls}" style="${isOwner?'':''}">${modBtns}${authorHtml} <span class="yt-text" style="${ts}">${m.message}</span></div>`;
+  });
+  
+  if(box.innerHTML!==html){
+    box.innerHTML=html;
+    if(wasAtBottom||hasNewMsgs){
+      requestAnimationFrame(()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));
+    }
+  }
+}
+
+async function sendChat(){
+  if(localStorage.getItem('user_banned_status')==='true'){showToast('عذراً، أنت محظور من الإرسال!',true);return}
+  const u=document.getElementById('chatUser').value.trim(),m=document.getElementById('chatMsg');
+  if(!u||!m.value.trim())return;
+  if(u==='صوفي ال دليم'){
+    if(localStorage.getItem('owner_verified')!=='true'){
+      if(document.getElementById('adminCode').value.trim()!=='3TX'){showToast('كود الإشراف خاطئ!',true);return}
+      localStorage.setItem('owner_verified','true');localStorage.setItem('locked_chat_username','صوفي ال دليم');
+      window.isAdminMode=true;document.getElementById('adminPanel').style.display='flex';
+      document.getElementById('secretCodeSection').style.display='none';
+      const cu=document.getElementById('chatUser');cu.disabled=true;cu.style.background='rgba(255,215,64,0.08)';cu.style.border='1px solid #ffd740';cu.style.color='#ffd740';cu.placeholder='المالك: صوفي ال دليم';
+      showToast('✅ تم تسجيلك كمدير للأبد!')
+    }
+  }else{
+    if(localStorage.getItem('user_muted_status')==='true'){showToast('تم كتمك، لا يمكنك الكتابة.',true);return}
+    localStorage.setItem('locked_chat_username',u);document.getElementById('chatUser').disabled=true;document.getElementById('secretCodeSection').style.display='none'
+  }
+  await sb.from('channel_chat').insert([{username:u,message:m.value.trim()}]);m.value='';
+  requestAnimationFrame(()=>{const box=document.getElementById('chatBox');box.scrollTo({top:box.scrollHeight,behavior:'smooth'})});
+  fetchLiveChat()
+}
+
+async function clearAllChatGlobal(){if(!window.isAdminMode)return;try{await sb.from('channel_chat').delete().gt('id',0);await sb.from('channel_chat').insert([{username:'📢 أمر نظام الإشراف',message:'CLEAR_SCREEN'}]);showToast('تم مسح المحادثات وتصفير الدردشة بنجاح 🧹')}catch(e){}}
+
+async function triggerAction(actionType,targetUser){if(!window.isAdminMode||targetUser==='صوفي ال دليم')return;if(actionType==='BAN'){await sb.from('channel_chat').insert([{username:'📢 أمر نظام الإشراف',message:`BAN_USER:${targetUser}`}]);showToast(`تم حظر [ ${targetUser} ] بنجاح ⛔`,true)}else if(actionType==='MUTE'){await sb.from('channel_chat').insert([{username:'📢 أمر نظام الإشراف',message:`MUTE_USER:${targetUser}`}]);showToast(`تم كتم [ ${targetUser} ] بنجاح 🔇`)}else if(actionType==='UNBAN'){await sb.from('channel_chat').insert([{username:'📢 أمر نظام الإشراف',message:`UNBAN_USER:${targetUser}`}]);showToast(`تم فك الحظر/الكتم عن [ ${targetUser} ] ✅`)}}
+
+window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('owner_verified')==='true'){checkSavedOwner()}else{const su=localStorage.getItem('locked_chat_username');if(su&&su!=='صوفي ال دليم'){const uf=document.getElementById('chatUser');if(uf){uf.value=su;uf.disabled=true}}}});
+
+checkSavedOwner();
+setInterval(()=>{controlCenterLoop();fetchLiveChat()},2000);
+setInterval(pingViewer,10000);
+setInterval(getViewerCount,5000);
+pingViewer();setTimeout(getViewerCount,1500);fetchLiveChat();
+</script>
+</body>
+</html>
